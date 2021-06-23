@@ -16,7 +16,8 @@ module CloudHash
     def handle(connection)
       loop do
         request = connection.gets
-        break if request == 'exit'
+        break if request == "exit\n"
+        puts "recieve:#{request}:"
         connection.puts process(request)
       end
     end

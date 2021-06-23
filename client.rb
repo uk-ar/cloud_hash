@@ -8,25 +8,27 @@ module CloudHash
       @connection = TCPSocket.new(host,port)
     end
 
-    def self.get(key)#class method
+    def get(key)#class method
       request "GET #{key}"
     end
-    def self.set(key,value)#class method
+    def set(key,value)#class method
       request "SET #{key} #{value}"
     end
-    def self.request(string)
-      @client = TCPSocket.new(host,port)
-      @client.write(string)
-      #Send EOF after write
-      @client.close_write
-      #Read until EOF
-      @client.read
+    def exit
+      request "exit"
+    end
+    def request(string)
+      @connection.puts(string)
+      #Send a newline after write
+      @connection.gets
+      #Read until receiving a newline to get the response
     end
   end
 end
 
-CloudHash::Client.host = 'localhost'
-CloudHash::Client.port = 4481
-puts CloudHash::Client.set 'prez','obama'
-puts CloudHash::Client.get 'prez'
-puts CloudHash::Client.get 'vp'
+client = CloudHash::Client.new('localhost',4481)
+puts client.set 'prez','obama'
+puts client.set 'prez','obama'
+puts client.get 'prez'
+puts client.get 'vp'
+puts client.exit
